@@ -1,7 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"log"
+	"os"
+	"strconv"
+	"strings"
 )
 
 func MergeSort(array []int) {
@@ -61,18 +66,18 @@ func merge(array, temp []int, leftStart, rightEnd int) {
 }
 
 // Returning new array
-func MergeSortNewArray(array []int) []int {
+func MergeSortNewArray(array []int, inv int) ([]int, int) {
 	if len(array) < 2 {
-		return array
+		return array, 0
 	}
 
 	middle := len(array) / 2
-	a := MergeSortNewArray(array[:middle])
-	b := MergeSortNewArray(array[middle:])
-	return merge1(a, b)
+	a, inv1 := MergeSortNewArray(array[:middle], inv)
+	b, inv2 := MergeSortNewArray(array[middle:], inv)
+	return merge1(a, b, inv1+inv2)
 }
 
-func merge1(a, b []int) []int {
+func merge1(a, b []int, inversions int) ([]int, int) {
 	result := make([]int, len(a)+len(b))
 	i := 0
 	j := 0
@@ -87,6 +92,8 @@ func merge1(a, b []int) []int {
 		}
 	}
 
+	inv := inversions + i + j
+
 	for i < len(a) {
 		result[i+j] = a[i]
 		i++
@@ -96,13 +103,35 @@ func merge1(a, b []int) []int {
 		j++
 	}
 
-	return result
+	return result, inv
 }
 
 func main() {
-	fmt.Println("Hi")
-	array := []int{3, 4, 1, 5, 19, 2, 10, 4}
-	fmt.Println(array)
-	array = MergeSortNewArray(array)
-	fmt.Println(array)
+	fileNameScanner := bufio.NewScanner(os.Stdin)
+	fileNameScanner.Scan()
+	file, err := os.Open("./" + fileNameScanner.Text())
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	scanner.Scan()
+	n, _ := strconv.Atoi(scanner.Text())
+	datasets := make([][]int, n)
+	for i, _ := range datasets {
+		scanner.Scan() // throw away the number of elements in the array since I can't properly scan using it on hackerrank
+		scanner.Scan() // the space delimited array of numbers
+		array := strings.Split(scanner.Text(), " ")
+		numberArray := make([]int, len(array))
+		for i, v := range array {
+			num, _ := strconv.Atoi(v)
+			numberArray[i] = num
+		}
+		datasets[i] = numberArray
+	}
+	for _, v := range datasets {
+		_, inversions := MergeSortNewArray(v, 0)
+		fmt.Println(inversions)
+	}
 }
