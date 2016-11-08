@@ -6,11 +6,18 @@ import (
 )
 
 func TestMergeSortNewArray(t *testing.T) {
-	array := []int{5, 4, 3, 2, 1}
-	sorted, inversions := MergeSortNewArray(array, 0)
+	array := []int{1, 3, 5, 2, 4, 6}
+	sorted, inversions := MergeSortNewArray(array)
 	fmt.Println("The number of inversions:", inversions)
-	if !testSliceEquality([]int{1, 2, 3, 4, 5}, sorted) {
-		t.Error("Expected [1 2 3 4 5] but got:", sorted)
+	if !testSliceEquality([]int{1, 2, 3, 4, 5, 6}, sorted) {
+		t.Error("Expected [1 2 3 4 5 6] but got:", sorted)
+	}
+
+	arr := []int{1, 3, 5, 6, 2, 4, 7}
+	s, i := MergeSortNewArray(arr)
+	fmt.Println("The number of inversions pt2:", i)
+	if !testSliceEquality([]int{1, 2, 3, 4, 5, 6, 7}, s) {
+		t.Error("Expected [1 2 3 4 5 6 7] but got:", s)
 	}
 }
 

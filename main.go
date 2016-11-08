@@ -66,21 +66,24 @@ func merge(array, temp []int, leftStart, rightEnd int) {
 }
 
 // Returning new array
-func MergeSortNewArray(array []int, inv int) ([]int, int) {
+func MergeSortNewArray(array []int) ([]int, int) {
 	if len(array) < 2 {
 		return array, 0
 	}
 
 	middle := len(array) / 2
-	a, inv1 := MergeSortNewArray(array[:middle], inv)
-	b, inv2 := MergeSortNewArray(array[middle:], inv)
-	return merge1(a, b, inv1+inv2)
+	a, i1 := MergeSortNewArray(array[:middle])
+	b, i2 := MergeSortNewArray(array[middle:])
+
+	result, i3 := merge1(a, b)
+	return result, (i1 + i2 + i3)
 }
 
-func merge1(a, b []int, inversions int) ([]int, int) {
+func merge1(a, b []int) ([]int, int) {
 	result := make([]int, len(a)+len(b))
 	i := 0
 	j := 0
+	inv := 0
 
 	for i < len(a) && j < len(b) {
 		if a[i] <= b[j] {
@@ -88,11 +91,10 @@ func merge1(a, b []int, inversions int) ([]int, int) {
 			i++
 		} else {
 			result[i+j] = b[j]
+			inv += len(a) - i
 			j++
 		}
 	}
-
-	inv := inversions + i + j
 
 	for i < len(a) {
 		result[i+j] = a[i]
@@ -131,7 +133,7 @@ func main() {
 		datasets[i] = numberArray
 	}
 	for _, v := range datasets {
-		_, inversions := MergeSortNewArray(v, 0)
+		_, inversions := MergeSortNewArray(v)
 		fmt.Println(inversions)
 	}
 }
